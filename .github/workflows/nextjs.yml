@@ -18,10 +18,15 @@ jobs:
         with:
           node-version: 16  # Use the Node.js version required by your project
 
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+          
       - name: Install Dependencies
-        run: |
-          npm install -g pnpm
-          pnpm install  # Install project dependencies
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build Site
         run: |
