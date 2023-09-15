@@ -26,6 +26,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Set SHELL environment variable
+        run: echo "SHELL=/bin/bash" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v2
 
