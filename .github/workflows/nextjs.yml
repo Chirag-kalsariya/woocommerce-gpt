@@ -4,7 +4,8 @@ name: Deploy Next.js site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches:
+      - main
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -26,44 +27,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Set SHELL environment variable
-        run: echo "SHELL=/bin/bash" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
 
       - name: Install PNPM
         run: |
           curl -fsSL https://get.pnpm.io/install.sh | sh
         if: runner.os == 'Linux'
 
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-          cache: pnpm
+      - name: Add PNPM to PATH
+        run: echo "::add-path::$HOME/.pnpm/bin"
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server-side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
-
-      - name: Restore cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml', '**/yarn.lock') }}-
-
-      - name: Install dependencies
+      - name: Install project dependencies
         run: pnpm install
 
       - name: Build with Next.js
